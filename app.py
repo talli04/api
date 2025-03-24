@@ -20,7 +20,7 @@ def init_db():
                     titulo TEXT NOT NULL,
                     categoria TEXT NOT NULL,
                     autor TEXT NOT NULL,
-                    imagem_url TEXT NOT NULL
+                    image_url TEXT NOT NULL
                 )
             """
         )
@@ -32,13 +32,46 @@ def doar():
 
     dados = request.get_json()
 
+    print(f"AQUI ESTÃO OS DADOS RETORNADOS DO CLIENTE {dados}")
+    
     titulo = dados.get("titulo")
     categoria = dados.get("categoria")
     autor = dados.get("autor")
-    imagem_url = dados.get("imagem_url")
-
-    if not titulo or not categoria or not autor or not imagem_url:
+    image_url = dados.get("image_url")
+    if not titulo or not categoria or not autor or not image_url:
         return jsonify({"erro":"Todos os campos são obrigatórios"}),400
+
+    with sqlite3.connect("database.db") as conn:
+
+        conn.execute(f"""
+        INSERT INTO LIVROS (titulo, categoria, autor, image_url)
+        VALUES ("{titulo}", "{categoria}", "{autor}", "{image_url}")
+        """)
+
+    conn.commit()
+
+    return jsonify({"mensagem": "Livro cadastrado com sucesso"}), 201
+
+@app.route("/livros", methods=["GET"])
+def listar_livros():
+
+    with sqlite3.connect("database.db") as conn:
+       livros = conn.execute("SELECT * FROM LIVROS").fetchall()
+
+       livros_formatados = []
+
+       for item in livros:
+           dicionario_livros = {
+               "id": item[0],
+               "titulo": item[1],
+               "categoria": item[2],
+               "autor": item[3],
+               "image_url": item[4]
+           }
+           livros_formatados.append(dicionario_livros)
+    
+    return jsonify(livros_formatados)
+
 
 # se o arquivo app.py == ao arquivo principal da nossa aplicação
 if __name__ == "__main__":
