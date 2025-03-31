@@ -11,7 +11,7 @@ CORS(app)
 @app.route("/")
 def Api_desafio():
 
-    return "<h1>API que vai ser utilizada para o desafio 2 </h1>"
+    return "<h1>API que vai ser utilizada para o desafio final do modulo 2 </h1>"
 
 def init_db():
 
