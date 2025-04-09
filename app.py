@@ -28,6 +28,30 @@ def init_db():
             """
         )
 
+    quantidade = conn.execute("SELECT COUNT(*) FROM livros").fetchone()[0]
+
+
+    if quantidade == 0:
+    
+        livros_padrao = [
+            ("Fome de Poder", "Biografia", "Ray Krok", "https://i.pinimg.com/736x/41/eb/0a/41eb0a0dd7aef77d55684376473df884.jpg"),
+            ("Quem tem Dívidas, tem Dúvidas", "Finanças", "André Luiz Manzano", "https://m.media-amazon.com/images/I/81StxOXIWqL._SL1500_.jpg"),
+            ("O pequeno gatinho xadrez", "Infantil", "Maria Helena Paes", "https://www.formandocidadaos.com.br/images/capas/literaturas/capa_340.jpg"),
+        ]
+
+    
+        for livro in livros_padrao:
+       
+            titulo, categoria, autor, image_url = livro
+        
+       
+            conn.execute(f'''
+                INSERT INTO livros (titulo, categoria, autor, image_url)
+                VALUES ("{titulo}", "{categoria}", "{autor}", "{image_url}")
+            ''')
+        
+        conn.commit()
+
 init_db()
 
 @app.route("/doar", methods=["POST"])
